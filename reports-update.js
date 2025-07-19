@@ -1,3 +1,4 @@
+import { dirname } from "path";
 import { writeFile, readFile } from "fs/promises";
 
 const [_, __, id, committedBy, branch, commitHash, time] = process.argv;
@@ -10,9 +11,13 @@ const new_report = {
   time,
 };
 
-const file = await readFile("./reports.json", "utf-8");
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const reportsPath = `${__dirname}/reports.json`;
+
+const file = await readFile(reportsPath, "utf-8");
 const parsed = JSON.parse(file);
 
+// insert the new report at the beginning of the reports array
 parsed.reports.unshift(new_report);
 
-await writeFile("./reports.json", JSON.stringify(parsed, null, 2));
+await writeFile(reportsPath, JSON.stringify(parsed, null, 2));
