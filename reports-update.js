@@ -2,19 +2,16 @@ import { dirname } from "path";
 import { writeFile, readFile } from "fs/promises";
 import { fileURLToPath } from "url";
 
-const [_, __, id, committedBy, branch, commitHash, reportDir] = process.argv;
-
-const timestamp = reportDir
-  ?.replace("report-", "")
-  .replace(/-/g, ":")
-  .replace(/T(\d+):(\d+):(\d+)Z/, "T$1:$2:$3Z");
+const args = Object.fromEntries(
+  process.argv.slice(2).map((arg) => arg.split("="))
+);
 
 const new_report = {
-  id: Number(id),
-  committedBy,
-  branch,
-  commitHash,
-  time: timestamp,
+  id: Number(args.id),
+  committedBy: args.by,
+  branch: args.branch,
+  commitHash: args.hash,
+  time: args.time.replace("report-", ""),
 };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
