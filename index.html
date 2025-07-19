@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Videspan Test Reports</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Zen+Dots&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="./assets/icon.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="./assets/icon.png" type="image/x-icon" />
+  </head>
+  <body>
+    <h1>Videspan Test Reports</h1>
+    <p class="sub-title">
+      Test Reports of UI Semiconductor Scheduling Application
+    </p>
+    <main>
+      <table>
+        <thead>
+          <tr>
+            <th>Report ID</th>
+            <th>Committed By</th>
+            <th>Branch</th>
+            <th>Commit Hash</th>
+            <th>Playwright</th>
+            <th>Vitest</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Report data will be inserted here -->
+        </tbody>
+      </table>
+      <div id="pagination">
+        <button id="prevBtn">Previous</button>
+        <span id="pageInfo"></span>
+        <button id="nextBtn">Next</button>
+      </div>
+    </main>
+  </body>
+  <script>
+    const pageSize = 10;
+    let currentPage = 1;
+    let reportsData = [];
+
+    async function loadReport() {
+      try {
+        const response = await fetch("./reports.json");
+        if (!response.ok) throw new Error("Failed to load reports.json");
+        const data = await response.json();
+        reportsData = data.reports;
+        renderPage(currentPage);
+      } catch (err) {
+        console.error(err);
+        const tbody = document.querySelector("tbody");
+        const errorRow = document.createElement("tr");
+        errorRow.innerHTML = `<td colspan="7">Error loading report</td>`;
+        tbody.appendChild(errorRow);
+      }
+    }
+
+    function renderPage(page) {
+      const tbody = document.querySelector("tbody");
+      tbody.innerHTML = "";
+      const start = (page - 1) * pageSize;
+      const end = start + pageSize;
+      const pageReports = reportsData.slice(start, end);
+
+      pageReports.forEach((report) => {
+        const row = document.createElement("tr");
+        const fixedTime = report.time.replace(
+          /T(\d{2})-(\d{2})-(\d{2})Z/,
+          "T$1:$2:$3Z"
+        );
+        const formattedTime = new Date(fixedTime).toLocaleString();
+
+        row.innerHTML = `
+        <td>${report.id}</td>
+        <td>${report.committedBy}</td>
+        <td>${report.branch}</td>
+        <td title="${report.commitHash}">${report.commitHash.slice(
+          0,
+          10
+        )}...</td>
+        <td class="report-link-cell">
+          <a href="/test-reports/report-${
+            report.time
+          }/playwright-reports/index.html" class="report-link report-playwright">
+            <img src="./assets/playwright-logo.png" alt="Playwright" width="24" height="24">
+          </a>
+        </td>
+        <td class="report-link-cell">
+          <a href="/test-reports/report-${
+            report.time
+          }/html/index.html" class="report-link report-vitest">
+            <img src="./assets/vitest.svg" alt="Vitest" width="24" height="24">
+          </a>
+        </td>
+        <td>${formattedTime}</td>
+      `;
+        tbody.appendChild(row);
+      });
+
+      document.getElementById(
+        "pageInfo"
+      ).textContent = `Page ${page} of ${Math.ceil(
+        reportsData.length / pageSize
+      )}`;
+      document.getElementById("prevBtn").disabled = page === 1;
+      document.getElementById("nextBtn").disabled =
+        page * pageSize >= reportsData.length;
+    }
+
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderPage(currentPage);
+      }
+    });
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      if (currentPage * pageSize < reportsData.length) {
+        currentPage++;
+        renderPage(currentPage);
+      }
+    });
+
+    loadReport();
+  </script>
+</html>
