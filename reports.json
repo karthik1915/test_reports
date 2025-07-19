@@ -1,12 +1,6 @@
 {
   "reports": [
     {
-      "id": null,
-      "committedBy": "karthik1915",
-      "branch": "gh-actions",
-      "commitHash": "07426b4e22203daf028d42a232bf2b287d66ec45"
-    },
-    {
       "id": 1,
       "committedBy": "John Doe",
       "branch": "main",
