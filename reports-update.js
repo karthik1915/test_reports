@@ -1,4 +1,5 @@
 import { dirname } from "path";
+import { fileURLToPath } from "url";
 import { writeFile, readFile } from "fs/promises";
 
 const [_, __, id, committedBy, branch, commitHash, time] = process.argv;
