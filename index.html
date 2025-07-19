@@ -78,13 +78,13 @@
           /T(\d{2})-(\d{2})-(\d{2})Z/,
           "T$1:$2:$3Z"
         );
-        const formattedTime = new Date(fixedTime).toLocaleString();
+        const formattedTime = new Date(fixedTime).toLocaleString() || "N/A";
 
         row.innerHTML = `
-        <td>${report.id}</td>
-        <td>${report.committedBy}</td>
-        <td>${report.branch}</td>
-        <td title="${report.commitHash}">${report.commitHash.slice(
+        <td>${report?.id ?? "N/A"}</td>
+        <td>${report?.committedBy ?? "N/A"}</td>
+        <td>${report?.branch ?? "N/A"}</td>
+        <td title="${report?.commitHash ?? "N/A"}">${report.commitHash.slice(
           0,
           10
         )}...</td>
