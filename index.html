@@ -81,10 +81,10 @@
         const formattedTime = new Date(fixedTime).toLocaleString() || "N/A";
 
         row.innerHTML = `
-        <td>${report?.id ?? "N/A"}</td>
-        <td>${report?.committedBy ?? "N/A"}</td>
-        <td>${report?.branch ?? "N/A"}</td>
-        <td title="${report?.commitHash ?? "N/A"}">${report.commitHash.slice(
+        <td>${report.id || "N/A"}</td>
+        <td>${report.committedBy || "N/A"}</td>
+        <td>${report.branch || "N/A"}</td>
+        <td title="${report.commitHash || "N/A"}">${report.commitHash.slice(
           0,
           10
         )}...</td>
